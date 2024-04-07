@@ -1,7 +1,8 @@
 import RPi.GPIO as GPIO
 import speech_recognition as sr
 import os
-import openai 
+#import openai 
+from openai import OpenAI
 import time 
 import pyaudio
 import wave
@@ -17,7 +18,7 @@ GPIO.setmode(GPIO.BCM) # BCM vs Board
 GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 #load api key 
-openai.api_key_path ='.env'
+OpenAI.api_key_path ='.env'
 
 # record function 
 # https://makersportal.com/blog/2018/8/23/recording-audio-on-the-raspberry-pi-with-python-and-a-usb-microphone 
@@ -61,7 +62,7 @@ def recordAudio():
     wavefile.close()
 
 
-def audioToGPT3():
+def audioToOpenAI():
     # read filename 
     filename = 'sound.wav'
 
@@ -75,18 +76,27 @@ def audioToGPT3():
         # recognize (convert from speech to text)
         text = r.recognize_google(audio_data)
     
-    # sent to gpt-3 
-    response = openai.Completion.create(
-        model="text-davinci-001",
-        prompt=text, #replace with text from recording 
-        temperature=0.4, #randomness 
-        max_tokens=64, #charaters in response 
-        top_p=1, #controls diversity
-        frequency_penalty=0, #decrease repetition 
-        presence_penalty=0 #increase likelihood to talk about new topic 
+    # sent to openAI
+    response = OpenAI.completions.create(
+    model="gpt-3.5-turbo-instruct",
+    prompt="Explain machine learning in a short sentence.",
+    temperature=0.4, #randomness
+    max_tokens=64, #charaters in response
+    top_p=1, #controls diversity
+    frequency_penalty=0, #decrease repetition
+    presence_penalty=0 #increase likelihood to talk about new topic
     )
+    # response = openai.Completion.create(
+    #     model="text-davinci-001",
+    #     prompt=text, #replace with text from recording 
+    #     temperature=0.4, #randomness 
+    #     max_tokens=64, #charaters in response 
+    #     top_p=1, #controls diversity
+    #     frequency_penalty=0, #decrease repetition 
+    #     presence_penalty=0 #increase likelihood to talk about new topic 
+    # )
 
-    # response from gpt-3 
+    # response from openAI 
     result = response.choices[0].text
     print(result)
 
@@ -107,8 +117,8 @@ def pressButton(channel):
     # adding a sleep to make sure file has time to save before code runs 
     time.sleep(0.5)
 
-    # running transcribe and send transcription to Gpt-3 and waiting for response 
-    audioToGPT3()
+    # running transcribe and send transcription to OpenAI and waiting for response 
+    audioToOpenAI()
 
 # callback to execute function when button is pressed 
 GPIO.add_event_detect(23,GPIO.FALLING, callback=pressButton, bouncetime=200)
