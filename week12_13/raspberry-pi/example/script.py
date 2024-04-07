@@ -18,7 +18,10 @@ GPIO.setmode(GPIO.BCM) # BCM vs Board
 GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 #load api key 
-OpenAI.api_key_path ='.env'
+#OpenAI.api_key_path ='.env'
+# add your api key as env var 
+# https://help.openai.com/en/articles/5112595-best-practices-for-api-key-safety 
+OpenAI.api_key = os.environ[“OPENAI_API_KEY”]
 
 # record function 
 # https://makersportal.com/blog/2018/8/23/recording-audio-on-the-raspberry-pi-with-python-and-a-usb-microphone 
@@ -77,9 +80,10 @@ def audioToOpenAI():
         text = r.recognize_google(audio_data)
     
     # sent to openAI
-    response = OpenAI.completions.create(
+    client = OpenAI()
+    response = client.completions.create(
     model="gpt-3.5-turbo-instruct",
-    prompt="Explain machine learning in a short sentence.",
+    prompt=text,
     temperature=0.4, #randomness
     max_tokens=64, #charaters in response
     top_p=1, #controls diversity

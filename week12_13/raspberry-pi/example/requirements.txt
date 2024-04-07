@@ -7,5 +7,3 @@ openai==1.16.2 #latest version
 python-dotenv==0.20.0
 pyttsx3==2.90
 gTTS==2.2.4
-
-
