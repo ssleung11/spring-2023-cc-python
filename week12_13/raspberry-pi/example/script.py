@@ -21,7 +21,7 @@ GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 #OpenAI.api_key_path ='.env'
 # add your api key as env var 
 # https://help.openai.com/en/articles/5112595-best-practices-for-api-key-safety 
-OpenAI.api_key = os.environ[“OPENAI_API_KEY”]
+OpenAI.api_key = os.environ['OPENAI_API_KEY']
 
 # record function 
 # https://makersportal.com/blog/2018/8/23/recording-audio-on-the-raspberry-pi-with-python-and-a-usb-microphone 
